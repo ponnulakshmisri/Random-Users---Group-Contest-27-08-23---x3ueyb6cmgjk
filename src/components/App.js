@@ -2,32 +2,34 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Users from "./users";
 
-function App() {
-  const [loading, setLoading] = useState(true);
-  const [userNames, setUserNames] = useState([]);
 
-  useEffect(() => {
-   
-    fetch('https://randomuser.me/api/?results=10')
-      .then((response) => response.json())
-      .then((data) => {
-       
-        const firstNames = data.results.map((user) => user.name.first);
-        setUserNames(firstNames);
+const App = () => {
+    const [items, setItems] = useState([]);
+    const [isLoading, setLoading] = useState(false);
+    console.clear();
 
-      
-        setTimeout(() => {
-          setLoading(false);
-        }, 3000);
-      });
-  }, []);
+    function dataExtracting(data) {
+        let extracted = data.map((item)=> {
+            return item;
+        })
+        setItems(extracted);
+    }
+    
+    useEffect(() => {
+        let url = "https://randomuser.me/api/?results=10";
+        
+        setTimeout(()=> {
+            setLoading(true);
+        }, 3000)
 
-  return (
-    <div>
-     
-      {loading ? <div id="loading">Loading....</div> : <Users userNames={userNames} />}
-    </div>
-  );
-}
+        fetch(url).then(data=>data.json()).then(data=>{            
+            dataExtracting(data.results);
+        })
+
+
+    }, []);
+
+    return <Users isLoading={isLoading} items={items} />;
+};
 
 export default App;
